@@ -14,7 +14,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@paddle/paddle-js": "^1.6.2",
     "@paddle/paddle-node-sdk": "^3.7.0",
-    "@prisma/client": "^7.7.0",
+    "@prisma/client": "^5.22.0",
     "bcryptjs": "^3.0.3",
     "canvas": "^3.2.3",
     "class-variance-authority": "^0.7.1",
@@ -47,7 +47,7 @@
     "dotenv": "^17.4.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
-    "prisma": "^7.7.0",
+    "prisma": "^5.22.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
