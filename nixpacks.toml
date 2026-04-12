@@ -1,14 +1,14 @@
 [phases.setup]
-nixPkgs = [
-  "cairo",
-  "pango",
-  "libjpeg",
-  "giflib",
-  "librsvg",
+aptPkgs = [
+  "libcairo2-dev",
+  "libpango1.0-dev",
+  "libjpeg-dev",
+  "libgif-dev",
+  "librsvg2-dev",
   "pkg-config",
   "python3",
-  "fontconfig",
-  "freetype"
+  "libfontconfig1-dev",
+  "libfreetype6-dev"
 ]
 
 [phases.install]
