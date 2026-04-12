@@ -29,6 +29,18 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  // Redirect bare apex domain to www
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "emailcountdown.net" }],
+        destination: "https://www.emailcountdown.net/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   // Ensure GIF API routes are never statically cached
   async headers() {
     return [
