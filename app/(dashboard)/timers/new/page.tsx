@@ -69,8 +69,17 @@ export default function NewTimerPage() {
     }
   }
 
+  const selectedTemplateConfig = TIMER_TEMPLATES.find(
+    (t) => t.id === selectedTemplate
+  )?.config ?? {};
+  const bgColor = selectedTemplateConfig.backgroundColor ?? "#1a1a1a";
+  const digitColor = selectedTemplateConfig.digitColor ?? "#ffffff";
+  const labelColor = selectedTemplateConfig.labelColor ?? "#cccccc";
+  const accentColor = selectedTemplateConfig.accentColor ?? "#e63946";
+  const units = selectedTemplateConfig.displayUnits ?? ["hours", "minutes", "seconds"];
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="flex flex-col xl:flex-row gap-8 items-start">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Create New Timer</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -230,6 +239,35 @@ export default function NewTimerPage() {
           {loading ? "Creating..." : "Create Timer"}
         </Button>
       </div>
+    </div>
+
+    {/* Live template preview */}
+    <div className="xl:sticky xl:top-6 xl:w-72 shrink-0 space-y-3">
+      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Preview</p>
+      <div
+        className="rounded-2xl p-6 flex flex-col items-center justify-center gap-3 min-h-[180px]"
+        style={{ backgroundColor: bgColor }}
+      >
+        <div className="flex items-end gap-3">
+          {units.map((unit) => (
+            <div key={unit} className="flex flex-col items-center gap-1">
+              <div
+                className="rounded-lg flex items-center justify-center w-14 h-14 text-2xl font-bold tabular-nums"
+                style={{ backgroundColor: accentColor, color: digitColor }}
+              >
+                {unit === "days" ? "02" : unit === "hours" ? "14" : unit === "minutes" ? "33" : "07"}
+              </div>
+              <span className="text-[10px] uppercase tracking-widest" style={{ color: labelColor }}>
+                {unit}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground text-center">
+        Template preview · actual GIF shown after creation
+      </p>
+    </div>
     </div>
   );
 }
