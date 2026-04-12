@@ -5,7 +5,7 @@ nixPkgs = [
   "libjpeg",
   "giflib",
   "librsvg",
-  "pkgconfig",
+  "pkg-config",
   "python3",
   "fontconfig",
   "freetype"
