@@ -22,8 +22,12 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <Timer className="h-6 w-6 text-primary" />
-          <span>EmailCountdown.net</span>
+          <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 shadow-sm">
+            <Timer className="h-4 w-4 text-white" />
+          </div>
+          <span className="bg-gradient-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent">
+            EmailCountdown.net
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
