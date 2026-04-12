@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { CheckCircle, XCircle, Loader2, Mail } from "lucide-react";
 
 type State = "idle" | "loading" | "success" | "error";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [state, setState] = useState<State>(token ? "loading" : "idle");
@@ -84,5 +84,13 @@ export default function VerifyEmailPage() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
