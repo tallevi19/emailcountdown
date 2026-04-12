@@ -1,5 +1,7 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import Link, { LinkProps } from "next/link"
+import { forwardRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -55,4 +57,24 @@ function Button({
   )
 }
 
-export { Button, buttonVariants }
+// ButtonLink: a Link that looks like a Button (replaces Button asChild + Link)
+type ButtonLinkProps = LinkProps &
+  VariantProps<typeof buttonVariants> & {
+    className?: string
+    children?: React.ReactNode
+  }
+
+const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
+  function ButtonLink({ className, variant = "default", size = "default", ...props }, ref) {
+    return (
+      <Link
+        ref={ref}
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      />
+    )
+  }
+)
+ButtonLink.displayName = "ButtonLink"
+
+export { Button, ButtonLink, buttonVariants }

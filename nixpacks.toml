@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = [
+  "cairo",
+  "pango",
+  "libjpeg",
+  "giflib",
+  "librsvg",
+  "pkgconfig",
+  "python3",
+  "fontconfig",
+  "freetype"
+]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npx prisma generate", "npm run build"]
