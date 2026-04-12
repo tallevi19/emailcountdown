@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
   // Prevents Next.js from bundling them into the Edge Runtime
   serverExternalPackages: ["canvas", "gif-encoder-2"],
 
-  // Webpack config for canvas native module
+  // Empty turbopack config tells Next.js 16 we're aware of the webpack config
+  // Canvas externalization is handled by serverExternalPackages above
+  turbopack: {},
+
+  // Webpack config for canvas native module (used when --webpack flag is passed)
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = [
