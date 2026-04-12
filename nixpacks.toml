@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs_24"]
+nixPkgs = ["nodejs_22"]
 aptPkgs = [
   "libcairo2-dev",
   "libpango1.0-dev",
