@@ -33,21 +33,16 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await hash(password, 12);
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    await prisma.$transaction([
-      prisma.user.create({ data: { name, email, passwordHash } }),
-      prisma.verificationToken.create({
-        data: { identifier: email, token: verificationToken, expires },
-      }),
-    ]);
+    // Auto-verify email on creation — skip email verification flow
+    await prisma.user.create({
+      data: { name, email, passwordHash, emailVerified: new Date() },
+    });
 
-    await sendVerificationEmail(email, verificationToken).catch(console.error);
     await sendWelcomeEmail(email, name).catch(console.error);
 
     return NextResponse.json(
-      { message: "Account created. Please check your email to verify." },
+      { message: "Account created. You can now sign in." },
       { status: 201 }
     );
   } catch (error) {
