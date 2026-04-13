@@ -203,41 +203,27 @@ export async function generateCountdownGif(
   const sizeKey = (config.size ?? "M") as SizePreset;
   const { width, height } = SIZE_PRESETS[sizeKey] ?? SIZE_PRESETS.M;
 
-  // Determine frames (seconds values, counting down)
-  const frames: number[] = [];
   const total = Math.max(0, Math.floor(secondsRemaining));
 
-  if (total <= 0) {
-    frames.push(0);
-  } else if (total <= 60) {
-    for (let s = total; s >= 0; s--) {
-      frames.push(s);
-    }
-  } else {
-    const frameCount = 10;
-    for (let i = 0; i < frameCount; i++) {
-      frames.push(Math.floor(total * (1 - i / (frameCount - 1))));
-    }
-    frames.push(0);
+  // Always animate 1 frame per second for the next 60 seconds (or until zero).
+  // This gives smooth digit transitions regardless of total duration.
+  // Email clients re-fetch on each open so the minutes/hours stay accurate.
+  const frameCount = total === 0 ? 1 : Math.min(total, 60);
+  const frames: number[] = [];
+  for (let i = 0; i < frameCount; i++) {
+    frames.push(total - i);
   }
 
   const encoder = new GIFEncoder(width, height, "neuquant", true);
-  encoder.setDelay(1000);
-  encoder.setRepeat(0); // loop forever
+  encoder.setDelay(1000); // 1 frame per second
+  encoder.setRepeat(0);   // loop forever
   encoder.setQuality(10);
   encoder.start();
 
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
-  for (let i = 0; i < frames.length; i++) {
-    const secs = frames[i];
-    // For > 60s, set delay proportional to interval between frames
-    if (total > 60 && frames.length > 1) {
-      const interval = Math.floor((total / (frames.length - 2)) * 1000);
-      encoder.setDelay(Math.min(interval, 60000));
-    }
-
+  for (const secs of frames) {
     const time = getTimeComponents(secs);
     drawFrame(ctx, width, height, time, config);
     encoder.addFrame(ctx as unknown as CanvasRenderingContext2D);
