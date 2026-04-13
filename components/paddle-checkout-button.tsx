@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { Paddle } from "@paddle/paddle-js";
 import { PlanName } from "@/lib/plan-limits";
+import { toast } from "sonner";
 
 const PRICE_IDS: Record<PlanName, string | undefined> = {
   FREE: undefined,
@@ -39,10 +40,17 @@ export function PaddleCheckoutButton({
   }, []);
 
   const priceId = PRICE_IDS[planName];
-  const configured = !!process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN && !!priceId;
+  const label = `Upgrade to ${planName.charAt(0) + planName.slice(1).toLowerCase()}`;
 
   async function handleCheckout() {
-    if (!paddle || !priceId) return;
+    if (!priceId) {
+      toast.error("Price not configured — add the Paddle price ID to Railway env vars.");
+      return;
+    }
+    if (!paddle) {
+      toast.error("Paddle is still loading, please try again.");
+      return;
+    }
     setLoading(true);
     try {
       await paddle.Checkout.open({
@@ -54,24 +62,14 @@ export function PaddleCheckoutButton({
     }
   }
 
-  if (!configured) {
-    return (
-      <Button size="sm" className="w-full" variant="outline" disabled>
-        Coming soon
-      </Button>
-    );
-  }
-
   return (
     <Button
       size="sm"
       className="w-full"
       onClick={handleCheckout}
-      disabled={!paddle || loading}
+      disabled={loading}
     >
-      {loading || !paddle
-        ? "Loading..."
-        : `Upgrade to ${planName.charAt(0) + planName.slice(1).toLowerCase()}`}
+      {loading ? "Loading..." : label}
     </Button>
   );
 }
