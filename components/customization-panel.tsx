@@ -26,7 +26,7 @@ import { toast } from "sonner";
 interface CustomizationPanelProps {
   timer: Timer;
   plan: PlanName;
-  onConfigChange: () => void;
+  onConfigChange?: () => void;
 }
 
 function PlanLockBadge({ plan }: { plan: PlanName }) {
@@ -65,7 +65,7 @@ export function CustomizationPanel({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ config: updated }),
         });
-        onConfigChange();
+        onConfigChange?.();
       } catch {
         toast.error("Failed to save");
       } finally {

@@ -62,7 +62,6 @@ export default async function TimerEditorPage({
             <CustomizationPanel
               timer={timer}
               plan={plan}
-              onConfigChange={() => {}}
             />
           </div>
         </div>

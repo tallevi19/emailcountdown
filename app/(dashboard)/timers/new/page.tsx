@@ -80,6 +80,7 @@ export default function NewTimerPage() {
 
   return (
     <div className="flex flex-col xl:flex-row gap-8 items-start">
+      <div className="flex-1 flex flex-col gap-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Create New Timer</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -239,10 +240,10 @@ export default function NewTimerPage() {
           {loading ? "Creating..." : "Create Timer"}
         </Button>
       </div>
-    </div>
+      </div>
 
-    {/* Live template preview */}
-    <div className="xl:sticky xl:top-6 xl:w-72 shrink-0 space-y-3">
+      {/* Live template preview */}
+      <div className="xl:sticky xl:top-6 xl:w-72 shrink-0 space-y-3">
       <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Preview</p>
       <div
         className="rounded-2xl p-6 flex flex-col items-center justify-center gap-3 min-h-[180px]"
@@ -267,7 +268,7 @@ export default function NewTimerPage() {
       <p className="text-xs text-muted-foreground text-center">
         Template preview · actual GIF shown after creation
       </p>
-    </div>
+      </div>
     </div>
   );
 }
