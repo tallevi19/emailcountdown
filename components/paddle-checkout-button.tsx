@@ -27,15 +27,23 @@ export function PaddleCheckoutButton({
 
   useEffect(() => {
     const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-    if (!token) return;
+    const env = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT ?? "sandbox";
+    console.log("[Paddle] token present:", !!token, "| env:", env);
+    console.log("[Paddle] price IDs:", JSON.stringify(PRICE_IDS));
+    if (!token) {
+      console.warn("[Paddle] NEXT_PUBLIC_PADDLE_CLIENT_TOKEN is not set");
+      return;
+    }
     import("@paddle/paddle-js").then(({ initializePaddle }) => {
       initializePaddle({
-        environment:
-          (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT as
-            | "sandbox"
-            | "production") ?? "sandbox",
+        environment: env as "sandbox" | "production",
         token,
-      }).then(setPaddle);
+      }).then((p) => {
+        console.log("[Paddle] initialized:", !!p);
+        setPaddle(p);
+      }).catch((err) => {
+        console.error("[Paddle] init error:", err);
+      });
     });
   }, []);
 
