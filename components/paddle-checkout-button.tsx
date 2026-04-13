@@ -39,6 +39,7 @@ export function PaddleCheckoutButton({
   }, []);
 
   const priceId = PRICE_IDS[planName];
+  const configured = !!process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN && !!priceId;
 
   async function handleCheckout() {
     if (!paddle || !priceId) return;
@@ -53,14 +54,24 @@ export function PaddleCheckoutButton({
     }
   }
 
+  if (!configured) {
+    return (
+      <Button size="sm" className="w-full" variant="outline" disabled>
+        Coming soon
+      </Button>
+    );
+  }
+
   return (
     <Button
       size="sm"
       className="w-full"
       onClick={handleCheckout}
-      disabled={!paddle || !priceId || loading}
+      disabled={!paddle || loading}
     >
-      {loading ? "Loading..." : `Upgrade to ${planName.charAt(0) + planName.slice(1).toLowerCase()}`}
+      {loading || !paddle
+        ? "Loading..."
+        : `Upgrade to ${planName.charAt(0) + planName.slice(1).toLowerCase()}`}
     </Button>
   );
 }
