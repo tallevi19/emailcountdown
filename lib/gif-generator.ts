@@ -65,6 +65,15 @@ function hexToRgb(hex: string): [number, number, number] {
   ];
 }
 
+/** Shift each RGB channel by `amount` (positive = lighter, negative = darker). */
+function shiftColor(
+  [r, g, b]: [number, number, number],
+  amount: number
+): string {
+  const c = (v: number) => Math.max(0, Math.min(255, v + amount));
+  return `rgb(${c(r)},${c(g)},${c(b)})`;
+}
+
 // ─── Frame drawing ────────────────────────────────────────────────────────────
 function drawFrame(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,16 +148,19 @@ function drawFrame(
     const segX = pl + i * segWidth;
     const centerX = segX + segWidth / 2;
 
-    // Accent block background
+    // Digit card — solid block slightly lighter/darker than the background
+    // so it reads as a raised "flip-card" without a semi-transparent tint.
+    const bgRgb = hexToRgb(backgroundColor);
+    const bgLuminance = (0.299 * bgRgb[0] + 0.587 * bgRgb[1] + 0.114 * bgRgb[2]) / 255;
+    const cardShift = bgLuminance < 0.5 ? 28 : -22; // lighter on dark, darker on light
     const blockPad = Math.max(2, Math.floor(segWidth * 0.06));
     const blockX = segX + blockPad;
     const blockW = segWidth - blockPad * 2;
     const blockY = pt + Math.floor(innerHeight * 0.05);
     const blockH = Math.floor(innerHeight * (hideLabels ? 0.9 : 0.65));
-    const accentRgb = hexToRgb(accentColor);
-    ctx.fillStyle = `rgba(${accentRgb[0]},${accentRgb[1]},${accentRgb[2]},0.15)`;
+    ctx.fillStyle = shiftColor(bgRgb, cardShift);
     ctx.beginPath();
-    ctx.roundRect(blockX, blockY, blockW, blockH, 3);
+    ctx.roundRect(blockX, blockY, blockW, blockH, 4);
     ctx.fill();
 
     // Digit

@@ -53,8 +53,12 @@ export async function GET(
         : false,
     };
 
+    const searchParams = request.nextUrl.searchParams;
+    // Skip view counting for in-app preview requests (adds ?preview=1)
+    const isPreview = searchParams.get("preview") === "1";
+
     // Non-blocking view count increment (fire-and-forget)
-    prisma.timer
+    if (!isPreview) prisma.timer
       .update({
         where: { id: timerId },
         data: {
@@ -87,7 +91,6 @@ export async function GET(
 
     // Calculate seconds remaining based on timer type
     let secondsRemaining = 0;
-    const searchParams = request.nextUrl.searchParams;
 
     if (timer.timerType === "PERPETUAL") {
       const duration = searchParams.get("duration");

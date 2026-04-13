@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Timer } from "@prisma/client";
 import { TimerConfigType, DEFAULT_TIMER_CONFIG } from "@/lib/timer-config";
 import { PLAN_LIMITS, PlanName } from "@/lib/plan-limits";
@@ -53,26 +53,37 @@ export function CustomizationPanel({
     ...rawConfig,
   });
   const [saving, setSaving] = useState(false);
+  // Keep a ref to the latest config so the debounced save always sends the
+  // most recent value, even if called many times in quick succession (e.g.
+  // dragging a color picker fires onChange on every pixel movement).
+  const latestConfig = useRef(config);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateConfig = useCallback(
-    async (patch: Partial<TimerConfigType>) => {
-      const updated = { ...config, ...patch };
+    (patch: Partial<TimerConfigType>) => {
+      const updated = { ...latestConfig.current, ...patch };
+      latestConfig.current = updated;
       setConfig(updated);
-      setSaving(true);
-      try {
-        await fetch(`/api/timers/${timer.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ config: updated }),
-        });
-        onConfigChange?.();
-      } catch {
-        toast.error("Failed to save");
-      } finally {
-        setSaving(false);
-      }
+
+      // Debounce: cancel any pending save and schedule a new one.
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(async () => {
+        setSaving(true);
+        try {
+          await fetch(`/api/timers/${timer.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ config: latestConfig.current }),
+          });
+          onConfigChange?.();
+        } catch {
+          toast.error("Failed to save");
+        } finally {
+          setSaving(false);
+        }
+      }, 600);
     },
-    [config, timer.id, onConfigChange]
+    [timer.id, onConfigChange]
   );
 
   return (

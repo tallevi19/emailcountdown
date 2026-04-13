@@ -16,23 +16,30 @@ const GIF_BASE_URL = process.env.NEXT_PUBLIC_GIF_BASE_URL ?? "";
 export function TimerPreview({ timerId, width, height }: TimerPreviewProps) {
   const [src, setSrc] = useState("");
   const [copied, setCopied] = useState(false);
-  const previewPath = `/api/countdown/${timerId}`;
+  // preview=1 tells the API to skip view counting for in-app refreshes
+  const previewPath = `/api/countdown/${timerId}?preview=1`;
 
   const embedBase =
     GIF_BASE_URL ||
     (typeof window !== "undefined" ? window.location.origin : "");
   const gifUrl = `${embedBase}/api/countdown/${timerId}`;
-  const embedCode = `<img src="${gifUrl}" width="${width}" height="${height}" border="0" alt="Countdown Timer" style="display:block;max-width:100%;border:0;outline:none;">`;
+  const embedCode = `<table align="center" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="${gifUrl}" width="${width}" height="${height}" style="display:block;max-width:100%;" /></td>
+    </tr>
+  </tbody>
+</table>`;
 
   useEffect(() => {
     // Load the first frame immediately
-    setSrc(`${previewPath}?t=${Date.now()}`);
+    setSrc(`${previewPath}&t=${Date.now()}`);
 
     // Every 2 s: fetch the next GIF into a hidden Image object.
     // Once fully downloaded (in browser cache), swap the visible src —
     // the browser serves it from cache instantly so there is no blank flash.
     const interval = setInterval(() => {
-      const nextSrc = `${previewPath}?t=${Date.now()}`;
+      const nextSrc = `${previewPath}&t=${Date.now()}`;
       const preloader = new Image();
       preloader.onload = () => setSrc(nextSrc);
       preloader.src = nextSrc;
