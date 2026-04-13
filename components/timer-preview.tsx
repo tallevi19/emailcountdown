@@ -25,7 +25,11 @@ export function TimerPreview({ timerId, width, height }: TimerPreviewProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const gifUrl = `${GIF_BASE_URL}/api/countdown/${timerId}`;
+  // Relative path: always works on any hostname (Railway URL, custom domain, localhost)
+  const previewPath = `/api/countdown/${timerId}`;
+  // Embed code needs an absolute URL so the GIF loads inside email clients
+  const embedBase = GIF_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "");
+  const gifUrl = `${embedBase}/api/countdown/${timerId}`;
   const embedCode = `<img src="${gifUrl}" width="${width}" height="${height}" border="0" alt="Countdown Timer" style="display:block;max-width:100%;border:0;outline:none;">`;
 
   function copyCode() {
@@ -43,7 +47,7 @@ export function TimerPreview({ timerId, width, height }: TimerPreviewProps) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={cacheKey}
-          src={`${gifUrl}?t=${cacheKey}`}
+          src={`${previewPath}?t=${cacheKey}`}
           width={width}
           height={height}
           alt="Timer preview"
