@@ -108,7 +108,7 @@ export default async function BillingPage() {
       {/* Plan cards */}
       <div>
         <h2 className="text-lg font-semibold mb-4">Available Plans</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5">
           {PLANS.map((planName) => {
             const planLimits = PLAN_LIMITS[planName];
             const isCurrent = planName === plan;
@@ -117,11 +117,11 @@ export default async function BillingPage() {
             return (
               <Card
                 key={planName}
-                className={`relative ${isCurrent ? "border-primary" : ""} ${isPopular ? "ring-2 ring-primary" : ""}`}
+                className={`relative flex flex-col overflow-visible ${isCurrent ? "border-primary" : ""} ${isPopular ? "ring-2 ring-primary" : ""}`}
               >
                 {isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="text-xs">Most Popular</Badge>
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
+                    <Badge className="text-xs px-3">Most Popular</Badge>
                   </div>
                 )}
                 <CardHeader className="pb-2">
@@ -137,8 +137,8 @@ export default async function BillingPage() {
                     {formatPrice(planLimits.monthlyPriceCents)}
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <CardContent className="flex flex-col flex-1 space-y-3">
+                  <ul className="flex-1 space-y-1.5 text-xs text-muted-foreground">
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3 w-3 text-green-500 shrink-0" />
                       {planLimits.maxTimers === -1
@@ -181,22 +181,34 @@ export default async function BillingPage() {
                     )}
                   </ul>
 
-                  {!isCurrent && planName !== "FREE" && (
-                    <PaddleCheckoutButton
-                      planName={planName}
-                      customerEmail={session.user.email ?? ""}
-                    />
-                  )}
-                  {planName === "FREE" && isCurrent && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      disabled
-                    >
-                      Current plan
-                    </Button>
-                  )}
+                  <div>
+                    {!isCurrent && planName !== "FREE" && (
+                      <PaddleCheckoutButton
+                        planName={planName}
+                        customerEmail={session.user.email ?? ""}
+                      />
+                    )}
+                    {isCurrent && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        disabled
+                      >
+                        Current plan
+                      </Button>
+                    )}
+                    {planName === "FREE" && !isCurrent && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        disabled
+                      >
+                        Downgrade
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             );

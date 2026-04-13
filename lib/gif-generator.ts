@@ -124,7 +124,9 @@ function drawFrame(
     seconds: { value: time.seconds, defaultLabel: "SEC", customLabel: labelSeconds },
   };
 
-  const units = displayUnits.filter((u) => u in unitMap);
+  // Always render units in canonical order regardless of how displayUnits is stored
+  const CANONICAL_ORDER = ["days", "hours", "minutes", "seconds"] as const;
+  const units = CANONICAL_ORDER.filter((u) => displayUnits.includes(u as typeof CANONICAL_ORDER[number]));
   if (units.length === 0) return;
 
   const innerWidth = width - pl - pr;
